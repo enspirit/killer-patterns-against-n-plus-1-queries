@@ -114,7 +114,7 @@ In the example above, children records are kept in a cache, typically per primar
 key. The actual `callee`'s business logic for a given `i` is still done when the
 individual call is made.
 
-A variant exists WHERE the callee's logic is executed at caching time instead.
+A variant exists where the callee's logic is executed at caching time instead.
 We do not recommend it, since some caller's logic might actually skip some
 record and the business logic execution is then unnecessary while possibly
 costly. But if the refactoring is easier, it may prove an handy equivalent
