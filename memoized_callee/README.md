@@ -1,0 +1,56 @@
+## Memoized callee
+
+This pattern can be used when a `caller -> callee` relationship involves N+1
+queries, 1 in the caller, N in the callee. The refactoring mostly keeps the
+`caller` untouched, and changes the `callee` to use the database in smarter way,
+and cache database records.
+
+IMPORTANT: the pattern is only valid if `callee` is a pure function without
+side effects, i.e. its results only depend on the input arguments (if global
+software state is considered stable enough during the entire `caller` execution)
+
+See a real Ruby example: [before](./before.rb) and [after](./after.rb)
+
+## Before
+
+```ruby
+# we don't want to touch the loop code
+function caller
+  N = SQL("parent")
+  for i in N
+    callee(i)
+end
+
+# we may refactor this one to use a smarter SQL query
+function callee(i)
+  ri = SQL("child", i)
+  return some_result(ri)
+end
+```
+
+## After
+
+```ruby
+# we only touch two lines of code
+function caller
+  N = SQL("parent")
+  cache = callee(N)                          ## prefetch & cache
+  for i in N
+    callee(i, cache)                         ## one argument added
+end
+
+# we may refactor this one to use a smarter SQL query
+function callee(i, cache?)
+  if plural?(i)
+    cache << SQL("child", WHERE multiple i)  ## it's the database records that
+    return cache                             ## we cache, not the business logic itself
+  elsif cache?
+    ri = cache[i]                            ## SQL replaced by cache
+    return some_result(ri)                   ## most logic untouched if possible
+  else
+    warn('callee should be prefetched')
+    cache = callee([i])                      ## these two lines make the callee
+    return callee(i, cache)                  ## equivalent to the original program
+  end
+end
+```
