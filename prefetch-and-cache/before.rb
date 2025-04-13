@@ -1,15 +1,16 @@
 ### Original code, with N+1 queries
+require_relative '../example/helpers'
 
 class Software
 
   def caller
     # 1 query fetching some parent records
-    records = Database.query("parents", Array.new(10){|i| i })
+    employees = DB["SELECT * FROM employees LIMIT ?", N_SIZE]
 
     ############################## START/ WE DO NOT WANT TO TOUCH ALL CODE BELOW
     # N queries within a loop in the host language
     results = []
-    records.each do |record|
+    employees.each do |employee|
       # lots of complicated
       # logic
       #
@@ -17,31 +18,20 @@ class Software
       #
       # and somewhere, possibly under conditions,
       # a single call to the database for each id
-      result = callee(record[:id])
+      dept_name = callee(employee[:department_id])
       # and the logic is continued
       # using the result of course
-      results.push(result)
+      results.push("Employee #{employee[:email]} works for #{dept_name}")
     end
 
     results
     # END/ #####################################################################
   end
 
-  def callee(id)
-    result = Database.query("child", id)
+  def callee(dept_id)
+    dept = DB["SELECT * FROM departments WHERE id=?", dept_id].first
 
-    return "Some result with #{id} => #{result}"
-  end
-
-end
-
-class Database
-
-  # The following method simulates a call to a database,
-  # returning a result with `n` records depending on `arg`
-  def self.query(table, arg)
-    puts "SELECT ... FROM #{table} WHERE #{arg}"
-    Array(arg).map{|i| { table: table, id: i } }
+    return dept[:name]
   end
 
 end
