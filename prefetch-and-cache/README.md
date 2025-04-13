@@ -14,8 +14,8 @@ See also variants at the bottom of this page.
 
 See the Ruby code: [before](./before.rb), [after](./after.rb) and [ideal](./ideal.rb)
 
-The performance of `after.rb` is close to `ideal.rb` that uses a `SQL JOIN` while it
-clearly involves less refactoring work.
+The performance of `after.rb` is close to `ideal.rb` (that uses a `SQL JOIN`)
+while it clearly involves less refactoring work and is already 20x faster.
 
 ```sh
 $ time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/before.rb > /dev/null

@@ -32,6 +32,17 @@ etc.)
 
 Find instructions at the bottom of this README to execute the examples.
 
+## Memoized callee
+
+A pattern where a `caller (1 query) -> callee (N queries)` is transformed
+to `caller (1 query) -> callee (M queries with M << N)` with almost no change
+but a memoization of callee's results against naïve repetitions.
+
+The pattern is straightforward and can be applied as a very first strategy
+on very naive legacy code.
+
+[See the code](./memoize-callee/)
+
 ## Prefetch & Cache
 
 A pattern where a `caller (1 query) -> callee (N queries)` is transformed
@@ -55,13 +66,14 @@ $ make run
 You should end up with a result that looks like this :
 
 ```sh
-time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/before.rb > /dev/null
+$ time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/before.rb > /dev/null
 Running example with N=1000, SLOW=0.005
 
 real	0m6.891s
 user	0m0.514s
 sys	0m0.149s
-time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/after.rb > /dev/null
+
+$ time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/after.rb > /dev/null
 Running example with N=1000, SLOW=0.005
 
 real	0m0.358s
