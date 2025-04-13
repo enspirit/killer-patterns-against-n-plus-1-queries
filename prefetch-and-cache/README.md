@@ -8,8 +8,37 @@ complex business logic that you don't want to refactor). It extends the `callee`
 with a plural form that uses the database in a smarter way and cache database
 records for subsequent individual calls.
 
-See a real Ruby example: [before](./before.rb) and [after](./after.rb)
 See also variants at the bottom of this page.
+
+## Example
+
+See the Ruby code: [before](./before.rb), [after](./after.rb) and [ideal](./ideal.rb)
+
+The performance of `after.rb` is close to `ideal.rb` that uses a `SQL JOIN` while it
+clearly involves less refactoring work.
+
+```sh
+$ time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/before.rb > /dev/null
+Running example with N=1000, SLOW=0.005
+
+real	0m6.833s
+user	0m0.499s
+sys	0m0.142s
+
+$ time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/after.rb > /dev/null
+Running example with N=1000, SLOW=0.005
+
+real	0m0.364s
+user	0m0.250s
+sys	0m0.064s
+
+$ time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/ideal.rb > /dev/null
+Running example with N=1000, SLOW=0.005
+
+real	0m0.337s
+user	0m0.245s
+sys	0m0.058s
+```
 
 ## Applicability
 

@@ -6,6 +6,7 @@ clean:
 run: example/company.db
 	time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/before.rb > /dev/null
 	time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/after.rb > /dev/null
+	time N=1000 SLOW=0.005 bundle exec ruby prefetch-and-cache/ideal.rb > /dev/null
 
 Gemfile.lock: Gemfile
 	bundle install
